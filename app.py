@@ -11,9 +11,9 @@ OPENAI_BASE_URL = "https://api.openai.com/v1"
 def proxy():
     method = request.method
     path = request.full_path
-    data = request.get_data().decode('utf-8')
-    mimetype = request.mimetype
-    headers = {"Content-Type": mimetype}
+    data = request.get_data()
+    params = request.args
+    headers = {"Content-Type": request.content_type}
     authorization = request.authorization
     token = "invalid token."
     if authorization is not None and authorization.token is not None:
@@ -21,13 +21,9 @@ def proxy():
     else:
         logger.error(token)
 
-    # test value
-    # method = "POST"
-    # path = '/chat/completions?'
-    # data = '{"messages": [{"role": "user", "content": "Say this is a test"}, {"role": "user", "content": "What is my last question."}], "stream": false, "max_tokens": 3986, "model": "gpt-3.5-turbo", "n": 1, "temperature": 0.5, "frequency_penalty": 0, "presence_penalty": 0}'
-    # mimetype = 'application/json'
-    # headers = {"Content-Type": mimetype}
-    # token = 'sess-geKtJdf5z1NtMr72tnsWOeQuZdZlMFtP7jEwc44k'
+    isStream = False
+    if request.json is not None and type(request.json["stream"]) is bool:
+        isStream = request.json["stream"]
 
     res = {"status_code": 400, "reason": f"unanticipated method {method}"}
     res = requests.request(
@@ -36,16 +32,29 @@ def proxy():
         headers=headers,
         data=data,
         auth=(str('bearer'), token),
+        stream=isStream,
     )
 
-    return Response(response=res.content, status=res.status_code, headers=res.headers)
+    res_headers = list(res.headers)
+    final_headers = {}
+    for one_header in res_headers:
+        final_headers[one_header] = res.headers[one_header]
+
+    if isStream:
+        return Response(
+            response=res.iter_content(chunk_size=1024),
+            status=res.status_code,
+            headers=final_headers,
+        )
+    else:
+        return Response(response=res.content, status=res.status_code)
 
 
-@app.route("/", methods=["GET", "POST"])
-def hello_world():
-    print(request)
-    return "<p>Hello, World!</p>"
+# @app.route("/", methods=["GET", "POST"])
+# def hello_world():
+#     print(request)
+#     return "<p>Hello, World!</p>"
 
 
 if __name__ == "__main__":
-    app.run(port=8885)
+    app.run(port=8885, host="0.0.0.0")
