@@ -25,7 +25,6 @@ def proxy():
     if request.json is not None and type(request.json["stream"]) is bool:
         isStream = request.json["stream"]
 
-    res = {"status_code": 400, "reason": f"unanticipated method {method}"}
     res = requests.request(
         method=method,
         url=OPENAI_BASE_URL + path,
@@ -35,10 +34,11 @@ def proxy():
         stream=isStream,
     )
 
-    res_headers = list(res.headers)
-    final_headers = {}
-    for one_header in res_headers:
-        final_headers[one_header] = res.headers[one_header]
+    # res_headers = list(res.headers)
+    # final_headers = {}
+    # for one_header in res_headers:
+    #     final_headers[one_header] = res.headers[one_header]
+    final_headers = res.headers.items()
 
     if isStream:
         return Response(
@@ -47,7 +47,10 @@ def proxy():
             headers=final_headers,
         )
     else:
-        return Response(response=res.content, status=res.status_code)
+        return Response(
+            response=res.content,
+            status=res.status_code,
+        )
 
 
 # @app.route("/", methods=["GET", "POST"])
