@@ -5,6 +5,8 @@ services:
     build:
       context: ./
       dockerfile: dockerfile
+    image: openai-relay
+    container_name: openai-relay
     ports:
-      - 8885:8885
-    restart: always
+      - "8885:8885"
+    # restart: always
