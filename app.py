@@ -5,6 +5,7 @@ from libs.logger import logger
 
 app = Flask(__name__)
 OPENAI_BASE_URL = "https://api.openai.com/v1"
+# OPENAI_BASE_URL = "https://fake.test.com/v1"
 
 
 @app.before_request
@@ -22,7 +23,11 @@ def proxy():
         logger.error(token)
 
     isStream = False
-    if request.json is not None and type(request.json["stream"]) is bool:
+    if (
+        request.json is not None
+        and "stream" in request.json
+        and type(request.json["stream"]) is bool
+    ):
         isStream = request.json["stream"]
 
     res = requests.request(
