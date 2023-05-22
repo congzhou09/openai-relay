@@ -17,8 +17,10 @@ def proxy():
     headers = {"Content-Type": request.content_type}
     authorization = request.authorization
     token = "invalid token."
-    if authorization is not None and authorization.token is not None:
+    if authorization is not None and "token" in authorization:
         token = authorization.token
+    elif authorization is not None and "password" in authorization:
+        token = authorization.password
     else:
         logger.error(token)
 
