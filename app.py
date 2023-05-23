@@ -37,7 +37,7 @@ def proxy():
         url=OPENAI_BASE_URL + path,
         headers=headers,
         data=data,
-        auth=(str('bearer'), token),
+        auth=(str('bearer'), str(token)),
         stream=isStream,
     )
 
