@@ -14,6 +14,6 @@
 
 #### stream
 
-◆Openai response headers need to be set into Flask.Response. meanwhile, header fields in Flask.Response like 'Server', 'Date', 'Connection' are not set manually, because they cannot be overwritted and will leading to "duplicated header names" error.
+◆Openai response headers need to be set into Flask.Response. Meanwhile, header fields in Flask.Response like 'Server', 'Date', 'Connection' are not set manually, because they cannot be overwritted and will lead to "duplicated header names" error.
 
 ◆The request terminal will get an 502 status if using an remote ip address. Using domains will be OK.
