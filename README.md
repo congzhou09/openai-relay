@@ -4,9 +4,9 @@
 
 ### design
 
-◇Use Flask service to listen to all requests and parse input parameters. Then send new requests using the "requests" module, and parse the returned data. Finally, respond with Flask.Response.
+◇Use Flask service to listen to all requests to it, and parse input parameters. Then send new requests using the "requests" module, and parse the returned data. Finally, respond with Flask.Response.
 
-### problems record
+### reasons of some code details & tips
 
 #### non-stream
 
@@ -14,6 +14,6 @@
 
 #### stream
 
-◆Openai response headers need to be set into Flask.Response, meanwhile, headers in Flask.Response like 'Server', 'Date', 'Connection' will not be overwritted, which leading to duplicated header names.
+◆Openai response headers need to be set into Flask.Response, meanwhile, headers in Flask.Response like 'Server', 'Date', 'Connection' are not overwritted, which leading to duplicated header names.
 
-◆The request terminal will get an 502 status if request this service deployed in remote host using ip address. Using domains will be OK.
+◆The request terminal will get an 502 status if using an remote ip address. Using domains will be OK.
